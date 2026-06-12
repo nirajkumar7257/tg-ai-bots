@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TG Mini App</title>
+    <!-- Telegram Web App Script (Head me load hona jaroori hai) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 20px;
+            margin: 0;
+        }
+        .card {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h3 { margin-top: 0; color: #2481cc; }
+        p { margin: 5px 0; font-size: 14px; }
+        .bold { font-weight: bold; }
+        
+        /* 🌟 प्रोफाइल फोटो के लिए नया डिज़ाइन */
+        .avatar-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #2481cc;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Welcome dear 👀</h2>
+    <h2>🎧 Looking For A Music Bot? ✨Fast • Smooth • 24/7 Active, Play 🔍 Your Favorite Songs Instantly, Enjoy Music Without Hassle 🎶 Try It Once, You'll Love It 💞</h2>
+
+    <!-- Feature 1: User Details -->
+    <div class="card" id="user-card">
+        <h3>👤 User Details (You)</h3>
+        
+        <!-- 🌟 नया प्रोफाइल फोटो का सेक्शन -->
+        <div class="avatar-container">
+            <!-- शुरू में एक डिफ़ॉल्ट यूजर इमेज लोड होगी -->
+            <img id="u-avatar" class="user-avatar" src="https://cloudflare.com" alt="User DP">
+        </div>
+
+        <p><span class="bold">Name:</span> <span id="u-name">Loading...</span></p>
+        <p><span class="bold">Username:</span> <span id="u-username">Loading...</span></p>
+        <p><span class="bold">ID:</span> <span id="u-id">Loading...</span></p>
+        <p><span class="bold">Language:</span> <span id="u-lang">Loading...</span></p>
+    </div>
+
+    <!-- Feature 2: Bot Details -->
+    <div class="card" id="bot-card">
+        <h3>🤖 Bot 1 Details</h3>
+        <p><span class="bold">Bot Name:</span> ˹ʟᴀᴀᴅᴏ ꭙ ᴍᴜsɪᴄ˼ ♪</p>
+        <p><span class="bold">Bot Username:</span> @laado_musicbot</p>
+        <p><span class="bold">Status:</span> Active 🟢</p>
+    </div>
+    
+   <div class="card" id="bot-card">
+        <h3>🤖 Bot 2 Details</h3>
+        <p><span class="bold">Bot Name:</span> 𝗣𝗅𝗮𝘺𝘦𝘳𝘱𝙧𝘰 ꭙ 𝗠𝑢𝑠𝑖𝑐 ♪</p>
+        <p><span class="bold">Bot Username:</span> @PlayerPro_MusicBot</p>
+        <p><span class="bold">Status:</span> Active 🟢</p>
+   </div>
+
+    <!-- Feature 3: App Owner Details -->
+    <div class="card" id="owner-card">
+        <h3>👑 Owner</h3>
+        <p><span class="bold">Owner Name:</span> Niraj</p>
+        <p><span class="bold">Telegram Username:</span> @Comeback_009</p>
+        <p><span class="bold">Support:</span> https://t.me/Sangeet_Stream</p>
+    </div>
+
+    <script>
+        function initTelegramApp() {
+            // Telegram WebApp Object Check
+            const tg = window.Telegram?.WebApp;
+
+            if (tg) {
+                tg.ready(); 
+                tg.expand(); 
+
+                // Data fetch karne ki koshish karein
+                const user = tg.initDataUnsafe?.user; 
+
+                if (user && user.id) {
+                    // Agar user mil gaya toh loading hatao aur details dikhao
+                    document.getElementById('u-name').innerText = `${user.first_name} ${user.last_name || ''}`;
+                    document.getElementById('u-username').innerText = user.username ? `@${user.username}` : 'No Username';
+                    document.getElementById('u-id').innerText = user.id;
+                    document.getElementById('u-lang').innerText = user.language_code || 'en';
+                    
+                    // 🌟 अगर टेलीग्राम यूजर की फोटो का यूआरएल देता है तो उसे अपडेट करें
+                    if (user.photo_url) {
+                        document.getElementById('u-avatar').src = user.photo_url;
+                    }
+                    
+                    // Interval ko rokne ke liye
+                    clearInterval(checkInterval);
+                }
+            }
+        }
+
+        // Agar data slow load ho raha hai, toh yeh har 500ms (0.5 second) me check karega
+        const checkInterval = setInterval(initTelegramApp, 500);
+
+        // Max 5 seconds tak check karega, agar fir bhi nahi mila toh Browser mode default data dikhayega
+        setTimeout(() => {
+            clearInterval(checkInterval);
+            if (document.getElementById('u-id').innerText === "Loading...") {
+                document.getElementById('u-name').innerText = "Web Browser Mode";
+                document.getElementById('u-username').innerText = "@not_inside_tg";
+                document.getElementById('u-id').innerText = "Offline_ID_101";
+                document.getElementById('u-lang').innerText = "en";
+                // ब्राउज़र मोड में एक फूल वाली डिफ़ॉल्ट इमेज दिखेगी
+                document.getElementById('u-avatar').src = "https://cloudflare.com";
+            }
+        }, 5000);
+    </script>
+
+    <!-- तीनों बटनों का HTML कोड -->
+<div class="custom-bottom-container">
+    <button class="custom-bottom-btn channel-btn" onclick="openMyChannel()">channel 🚀</button>
+    <button class="custom-bottom-btn group-btn" onclick="openMyGroup()">group 💬</button>
+    <button class="custom-bottom-btn third-btn" onclick="openThirdLink()">help 🛠️</button>
+</div>
+
+<style>
+    /* बटन कंटेनर को नीचे फिक्स करने के लिए */
+    .custom-bottom-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: #17212b; /* डार्क बैकग्राउंड */
+        z-index: 9999;
+        display: flex;
+        flex-direction: row; /* तीनों बटन एक ही लाइन में अगल-बगल दिखेंगे */
+        gap: 6px; /* बटनों के बीच की दूरी */
+        justify-content: space-between;
+    }
+
+    /* बटनों का छोटा और सुंदर डिज़ाइन */
+    .custom-bottom-btn {
+        flex: 1; /* तीनों बटनों को बराबर साइज़ देने के लिए */
+        padding: 10px 5px; /* साइज़ छोटा करने के लिए पैडिंग कम की है */
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px; /* फॉन्ट साइज़ छोटा किया है ताकि टेक्स्ट फिट आ जाए */
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap; /* टेक्स्ट को नीचे की लाइन में जाने से रोकने के लिए */
+        text-align: center;
+        transition: background 0.2s ease;
+    }
+
+    /* पहला बटन: चैनल (नीला रंग) */
+    .channel-btn {
+        background-color: #2481cc;
+    }
+    .channel-btn:active {
+        background-color: #1a659e;
+    }
+
+    /* दूसरा बटन: ग्रुप (हरा रंग) */
+    .group-btn {
+        background-color: #2ea64f; 
+    }
+    .group-btn:active {
+        background-color: #217838;
+    }
+
+    /* तीसरा बटन: (बैंगनी/पर्पल रंग) */
+    .third-btn {
+        background-color: #6c5ce7; 
+    }
+    .third-btn:active {
+        background-color: #5b4cc4;
+    }
+
+    /* पेज का कंटेंट बटनों के पीछे न छुपे */
+    body {
+        padding-bottom: 70px !important; /* अगल-बगल होने से नीचे सिर्फ कम स्पेस चाहिए */
+    }
+</style>
+
+<!-- टेलीग्राम का जावास्क्रिप्ट SDK -->
+<script src="https://telegram.org"></script>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // 1. चैनल का लिंक
+    function openMyChannel() {
+        tg.openTelegramLink("https://t.me/Sangeet_Stream"); 
+    }
+
+    // 2. ग्रुप का लिंक
+    function openMyGroup() {
+        tg.openTelegramLink("https://t.me/sapna_quiz"); 
+    }
+
+    // 3. तीसरे बटन का लिंक यहाँ `YOUR_THIRD_LINK` की जगह डालें
+    function openThirdLink() {
+        tg.openTelegramLink("https://t.me/Comeback_009"); 
+    }
+</script>
+    
+</body>
+  </html>
